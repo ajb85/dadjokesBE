@@ -19,18 +19,59 @@ Backend API, and authorization
 ### [https://backend-dadjokes.herokuapp.com/api/auth/register]()
 
 * **Required:** username and password fields.
+Type: POST
+Body: 
+    { "username": string (Required),
+        "password": string (Required)}
+Responds:
+{
+    "id": int,
+    "username": string,
+    "password": hashed string
+}
 
 ### [https://backend-dadJokes.herokuapp.com/api/auth/login]()
 
 * **Required:** username and password fields.
+Type: POST
+Body: 
+    { "username": string (Required),
+        "password": string (Required)}
+Responds:
+{
+    "message": string,
+    "token": string
+}
 
 ### [https://backend-dadJokes.herokuapp.com/api/publicJokes]()
 
 * GET request to this route will return a public jokes
+Type: GET
+
+Responds:
+[
+    {
+        "id": int,
+        "joke": "Did you hear about the guy whose whole left side was cut off? He's all right now.",
+        "votes": int or null
+    }
+]
 
 * POST request to this route will add a new joke to the public jokes list
 * **Required field:** 'joke'
+Type: POST
+Body: 
+    { "joke": string (Required)}
 
+Responds:
+{
+    "id": int,
+    "joke": string,
+    "votes": null
+}
+
+
+//need to restest this section
 ### [https://backend-dadJokes.herokuapp.com/api/privateJokes]()
 
 * GET request to this route will return list of private jokes
