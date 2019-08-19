@@ -48,5 +48,26 @@ router.put('/:id', restricted, (req, res) => {
     }
   });
 
+  router.delete("/:id", (req, res) => {
+    const { id } = req.params;
+  
+    db("privateJokes")
+      .where({ id })
+      .del()
+      .returning("id")
+      .then(count => {
+        if (count > 0) {
+          res.status(200).json(count);
+        } else {
+          res.status(404).json({ errorMessage: "A joke the specified ID does not exist." });
+        }
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({ error: err, message: "There was an error removing that joke." });
+      });
+  });
+
 
 module.exports = router;
