@@ -54,7 +54,7 @@ router.put("/:id", restricted, (req, res) => {
   }
 });
 
-router.delete("/:id", restricted, (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
   db("privateJokes")
