@@ -161,7 +161,15 @@ Response:
 **Authorization:** _USER_TOKEN_
 
 Response:
-
-    	{
-    	    [id of deleted joke]
-    	}
+    
+    1
+    
+    **200 OK**
+    
+    or
+    
+    **404 NOT FOUND**
+    
+        {
+            "errorMessage": "A joke the specified ID does not exist."
+        }
