@@ -11,20 +11,20 @@ function find(filter) {
   if (filter) {
     return db('users as u')
       .select(
-        'u.id as id, u.first_name as first_name',
+        'u.id as id',
+        'u.password as password',
+        'u.first_name as first_name',
         'u.last_name as last_name',
         'u.age as age',
         'u.email as email'
       )
       .where(filter);
   }
-    return db('users as u')
-        .select(
-            'u.id as id, u.first_name as first_name',
-            'u.last_name as last_name',
-            'u.age as age',
-            'u.email as email'
-        )
+  return db('users as u').select(
+    'u.id as id, u.first_name as first_name',
+    'u.last_name as last_name',
+    'u.age as age',
+    'u.email as email'
   );
 }
 
