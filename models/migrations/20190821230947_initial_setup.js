@@ -2,14 +2,18 @@ exports.up = function(knex) {
   return knex.schema
     .createTable('users', tbl => {
       tbl.increments();
-      tbl.text('first_name').notNullable();
-      tbl.text('last_name').notNullable();
-      tbl.integer('age');
       tbl
         .text('email')
         .notNullable()
         .unique();
+      tbl
+        .text('username')
+        .notNullable()
+        .unique();
       tbl.text('password').notNullable();
+      tbl.text('first_name');
+      tbl.text('last_name');
+      tbl.integer('age');
     })
     .createTable('jokes', tbl => {
       tbl.increments();
