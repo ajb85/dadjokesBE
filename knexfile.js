@@ -1,51 +1,39 @@
-// Update with your config settings.
-const productionDbConnection = process.env.DATABASE_URL
-
+require('dotenv').config();
 module.exports = {
-
   development: {
-    client: 'sqlite3',
-    useNullAsDefault: true,
+    client: 'postgresql',
     connection: {
-      filename: './database/dadJpkesdb.db3'
+      database: process.env.DB_LOCAL,
+      user: process.env.DB_LOCAL_USER,
+      password: process.env.DB_LOCAL_PASSWORD
     },
     pool: {
-      afterCreate: (conn, done) => {
-        conn.run('PRAGMA foreign_keys = ON', done);
-      },
+      min: 2,
+      max: 10
     },
     migrations: {
-      directory: './database/migrations',
+      tableName: 'knex_migrations',
+      directory: './models/migrations/'
     },
     seeds: {
-      directory: './database/seeds',
+      directory: './models/seeds/'
     },
-
+    useNullAsDefault: true
   },
-
-  testing: {
-    client: 'sqlite3',
-    connection: {
-      filename: './database/test.db3',
-    },
-    useNullAsDefault: true,
-    migrations: {
-      directory: './database/migrations',
-    },
-    seeds: {
-      directory: './database/seeds',
-    },
-  },
-
   production: {
-    client: 'pg',
-    connection: productionDbConnection,
+    client: 'postgresql',
+    connection: process.env.DATABASE_URL,
+    pool: {
+      min: 2,
+      max: 10
+    },
     migrations: {
-      directory: './database/migrations',
+      tableName: 'knex_migrations',
+      directory: './models/migrations/'
     },
     seeds: {
-      directory: './database/seeds',
+      directory: './models/seeds/'
     },
-  },
-  
+    useNullAsDefault: true
+  }
 };
