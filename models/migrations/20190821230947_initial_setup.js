@@ -5,7 +5,10 @@ exports.up = function(knex) {
       tbl.text('first_name').notNullable();
       tbl.text('last_name').notNullable();
       tbl.integer('age');
-      tbl.text('email').notNullable();
+      tbl
+        .text('email')
+        .notNullable()
+        .unique();
       tbl.text('password').notNullable();
     })
     .createTable('jokes', tbl => {
@@ -38,7 +41,7 @@ exports.up = function(knex) {
         .onUpdate('CASCADE')
         .notNullable();
     })
-    .createTable('upvotes', tbl => {
+    .createTable('votes', tbl => {
       tbl.increments();
       tbl
         .integer('user_id')
@@ -54,7 +57,7 @@ exports.up = function(knex) {
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
         .notNullable();
-      tbl.integer('score').notNullable();
+      tbl.integer('vote').notNullable();
     });
 };
 
