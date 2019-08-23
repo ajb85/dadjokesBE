@@ -3,8 +3,7 @@ const db = require('../index.js');
 module.exports = {
   find,
   toggle,
-  create,
-  remove
+  create
 };
 
 function find(filter) {

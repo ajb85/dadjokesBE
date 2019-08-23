@@ -9,27 +9,27 @@ module.exports = {
 
 function find(filter) {
   if (filter) {
-    return db('jokes as j')
+    return db('jokes AS j')
       .select(
-        'j.id as id',
-        'u.email as creator',
-        'j.setup as setup',
-        'j.punchline as punchline',
-        'j.isPublic as isPublic'
+        'j.id AS id',
+        'u.username AS creator',
+        'j.setup AS setup',
+        'j.punchline AS punchline',
+        'j.isPublic AS isPublic'
       )
       .where(filter)
-      .join('user as u', { 'j.user_id': 'u.id' });
+      .join('users AS u', { 'j.user_id': 'u.id' });
   }
-  return db('jokes as j')
+  return db('jokes AS j')
     .select(
-      'j.id as id',
-      'u.email as creator',
-      'j.setup as setup',
-      'j.punchline as punchline',
-      'j.isPublic as isPublic'
+      'j.id AS id',
+      'u.email AS creator',
+      'j.setup AS setup',
+      'j.punchline AS punchline',
+      'j.isPublic AS isPublic'
     )
     .where(filter)
-    .join('user as u', { 'j.user_id': 'u.id' });
+    .join('users AS u', { 'j.user_id': 'u.id' });
 }
 
 function edit(filter, newInfo) {
