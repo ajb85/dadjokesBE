@@ -36,7 +36,7 @@ function edit(filter, newInfo) {
   db('jokes')
     .where(filter)
     .update(newInfo)
-    .then(j => find({ id: j[0].id }).first());
+    .then(j => find({ 'j.id': j[0].id }).first());
 }
 
 function create(newJoke) {
@@ -45,8 +45,8 @@ function create(newJoke) {
     .then(j => find({ id: j[0].id }).first());
 }
 
-function remove(id) {
+function remove(filter) {
   return db('jokes')
-    .where({ id })
+    .where(filter)
     .delete();
 }
