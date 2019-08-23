@@ -4,8 +4,7 @@ const secret = require('./secret.js');
 
 module.exports = user => {
   const payload = {
-    subject: user.id,
-    username: user.username
+    user_id: user.id
   };
 
   const options = {
