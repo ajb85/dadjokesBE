@@ -8,7 +8,8 @@ const { verifyJoke } = require('../../middleware/jokes.js');
 router
   .route('/')
   .get(async (req, res) => {
-    const jokes = await Jokes.find({ 'j.isPublic': true });
+    let jokes = await Jokes.find({ 'j.isPublic': true });
+    jokes = jokes.map(j => ({ ...j, upvotes: 1, downvotes: 1, favorites: 1 }));
     // const all_favorites
     return jokes.length
       ? res.status(200).json(jokes)
