@@ -12,7 +12,7 @@ const authRouter = require('./routes/auth/');
 // const usersRouter = require('./routes/users/');
 const jokesRouter = require('./routes/jokes/');
 const favoritesRouter = require('./routes/favorites/');
-// const upvotesRouter = require('./routes/upvotes/');
+const votesRouter = require('./routes/votes/');
 
 server.use(helmet());
 server.use(express.json());
@@ -22,7 +22,7 @@ server.use('/api/auth', authRouter);
 // server.use('/api/users', usersRouter);
 server.use('/api/jokes', auth, jokesRouter);
 server.use('/api/favorites', auth, favoritesRouter);
-// server.use('/api/upvotes', upvotesRouter);
+server.use('/api/votes', auth, votesRouter);
 
 server.get('/', (req, res) => {
   res.send("It's working!");

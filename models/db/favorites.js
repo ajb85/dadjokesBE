@@ -2,42 +2,50 @@ const db = require('../index.js');
 
 module.exports = {
   find,
-  toggle,
-  create
+  toggle
 };
 
 function find(filter) {
-  if (filter) {
-    return db('favorites as f')
-      .select('f.id as favorite_id', 'j.id as id')
-      .where(filter)
-      .join('user as u', { 'f.user_id': 'u.id' })
-      .join('jokes as j', { 'f.joke_id': 'j.id' });
-  }
-  return db('favorites as f')
-    .select('j.id as id')
-    .where(filter)
-    .join('user as u', { 'f.user_id': 'u.id' })
-    .join('jokes as j', { 'f.joke_id': 'j.id' });
+  return filter
+    ? db('favorites AS f')
+        .select(
+          'f.id as id',
+          'j.id AS joke_id',
+          'j.setup AS setup',
+          'j.punchline AS punchline',
+          'j.isPublic as isPublic'
+        )
+        .where(filter)
+        .join('users AS u', { 'f.user_id': 'u.id' })
+        .join('jokes AS j', { 'f.joke_id': 'j.id' })
+    : db('favorites AS f')
+        .select(
+          'f.id as id',
+          'j.id AS joke_id',
+          'j.setup AS setup',
+          'j.punchline AS punchline',
+          'j.isPublic as isPublic'
+        )
+        .join('users AS u', { 'f.user_id': 'u.id' })
+        .join('jokes AS j', { 'f.joke_id': 'j.id' });
 }
 
 async function toggle(filter) {
-  const isFavorite = await find(filter).first();
-  if (isFavorite) {
-    return remove(isFavorite.favorite_id);
-  } else {
-    return create(filter);
-  }
+  const isFavorite = await find({
+    'f.user_id': filter.user_id,
+    'f.joke_id': filter.joke_id
+  }).first();
+  return isFavorite ? remove({ id: isFavorite.id }) : create(filter);
 }
 
 function create(newFav) {
   return db('favorites')
     .insert(newFav, ['*'])
-    .then(f => find({ id: f[0].id }).first());
+    .then(f => find({ 'f.id': f[0].id }).first());
 }
 
-function remove(id) {
+function remove(filter) {
   return db('favorites')
-    .where({ id })
+    .where(filter)
     .delete();
 }
