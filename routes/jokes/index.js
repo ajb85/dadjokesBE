@@ -1,12 +1,15 @@
 const router = require('express').Router();
 const Jokes = require('../../models/db/jokes.js');
+const Favorite = require('../../models/db/favorites.js');
+const Votes = require('../../models/db/votes.js');
 
 const { verifyJoke } = require('../../middleware/jokes.js');
 
 router
   .route('/')
   .get(async (req, res) => {
-    const jokes = await Jokes.find({ isPublic: true });
+    const jokes = await Jokes.find({ 'j.isPublic': true });
+    // const all_favorites
     return jokes.length
       ? res.status(200).json(jokes)
       : res.status(200).json({ message: 'No joke, there are no jokes!' });
@@ -19,8 +22,15 @@ router
     return res.status(201).json(joke);
   });
 
+router.route('/by_user').get(async (req, res) => {
+  const { user_id } = res.locals.token;
+  const userJokes = await Jokes.find({ 'j.user_id': user_id });
+
+  return res.status(200).json(userJokes);
+});
+
 router
-  .route('/:id')
+  .route('/single/:id')
   .get(async (req, res) => {
     const { user_id } = res.locals.token;
     const { id } = req.params;
@@ -43,3 +53,25 @@ router
   });
 
 module.exports = router;
+// knex
+//   .distinct('*')
+//   .from(function() {
+//     this.union(function() {
+//       this.select('*', '1 as rank')
+//         .from('table1')
+//         .where('Word', 'like', 'mike');
+//     })
+//       .union(function() {
+//         this.select('*', '2 as rank')
+//           .from('table1')
+//           .where('Word', 'like', 'mike%');
+//       })
+//       .union(function() {
+//         this.select('*', '3 as rank')
+//           .from('table1')
+//           .where('Word', 'like', '%mike%');
+//       })
+//       .as('X');
+//   })
+//   .orderBy('WordOrder')
+//   .toString();

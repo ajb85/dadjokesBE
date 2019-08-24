@@ -1,21 +1,27 @@
 const router = require('express').Router();
 const Favorites = require('../../models/db/favorites.js');
 
-router.route('/user').get(async (req, res) => {
-  console.log(res.locals.user);
-  return;
-  //   const { user_id } = req.locals.user;
-  //   const favorites = await Favorites.find({ user_id });
+router.route('/').get(async (req, res) => {
+  const { user_id } = res.locals.token;
+  const allFavorites = await Favorites.find({ 'f.user_id': user_id });
 
-  //   return res.status(200).json(favorites);
+  const publicFavorites = allFavorites.filter(
+    f => f.isPublic || f.user_id === user_id
+  );
+
+  return res.status(200).json(publicFavorites);
 });
 
-router.route('/favorites/toggle').post(async (req, res) => {
-  const { user_id, joke_id } = req.body;
-  await Favorites.toggle({ user_id, joke_id });
-  const favorites = await Favorites.find({ user_id });
+router.route('/toggle/:joke_id').post(async (req, res) => {
+  const { user_id } = res.locals.token;
+  const { joke_id } = req.params;
+  const toggled = await Favorites.toggle({ user_id, joke_id });
 
-  return res.status(200).json({ favorites });
+  return toggled.id
+    ? res.status(200).json(toggled)
+    : toggled
+    ? res.sendStatus(200)
+    : res.status(404).json({ message: "I didn't find a joke to toggle" });
 });
 
 module.exports = router;
