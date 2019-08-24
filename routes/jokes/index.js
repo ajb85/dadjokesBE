@@ -53,25 +53,3 @@ router
   });
 
 module.exports = router;
-// knex
-//   .distinct('*')
-//   .from(function() {
-//     this.union(function() {
-//       this.select('*', '1 as rank')
-//         .from('table1')
-//         .where('Word', 'like', 'mike');
-//     })
-//       .union(function() {
-//         this.select('*', '2 as rank')
-//           .from('table1')
-//           .where('Word', 'like', 'mike%');
-//       })
-//       .union(function() {
-//         this.select('*', '3 as rank')
-//           .from('table1')
-//           .where('Word', 'like', '%mike%');
-//       })
-//       .as('X');
-//   })
-//   .orderBy('WordOrder')
-//   .toString();
