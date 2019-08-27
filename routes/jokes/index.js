@@ -27,7 +27,14 @@ router.route('/by_user').get(async (req, res) => {
   const { user_id } = res.locals.token;
   const userJokes = await Jokes.find({ 'j.user_id': user_id });
 
-  return res.status(200).json(userJokes);
+  const cheatingMyJokes = userJokes.map(j => ({
+    ...j,
+    upvotes: 1,
+    downvotes: 1,
+    favorites: 1
+  }));
+
+  return res.status(200).json(cheatingMyJokes);
 });
 
 router
