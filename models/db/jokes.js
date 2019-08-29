@@ -21,12 +21,12 @@ function find(filter) {
         .count('f.joke_id AS favorites')
         .count('up.joke_id AS upvotes')
         .count('down.joke_id AS downvotes')
-        .where(filter)
         .join('users AS u', { 'j.user_id': 'u.id' })
         .leftJoin('favorites AS f', { 'f.joke_id': 'j.id' })
         .leftJoin('votes AS up', { 'up.joke_id': 'j.id', 'up.vote': 1 })
         .leftJoin('votes AS down', { 'down.joke_id': 'j.id', 'down.vote': -1 })
         .groupBy('j.id', 'u.id')
+        .where(filter)
     : db('jokes AS j')
         .select(
           'j.id AS id',

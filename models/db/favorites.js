@@ -16,8 +16,15 @@ function find(filter) {
           'j.isPublic as isPublic'
         )
         .where(filter)
+        .count('fc.joke_id AS favorites')
+        .count('up.joke_id AS upvotes')
+        .count('down.joke_id AS downvotes')
         .join('users AS u', { 'f.user_id': 'u.id' })
         .join('jokes AS j', { 'f.joke_id': 'j.id' })
+        .leftJoin('votes AS up', { 'up.joke_id': 'j.id', 'up.vote': 1 })
+        .leftJoin('votes AS down', { 'down.joke_id': 'j.id', 'down.vote': -1 })
+        .leftJoin('favorites AS fc', { 'fc.joke_id': 'j.id' })
+        .groupBy('f.id', 'j.id', 'u.id')
     : db('favorites AS f')
         .select(
           'f.id as id',
