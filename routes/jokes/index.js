@@ -1,16 +1,25 @@
 const router = require('express').Router();
 const Jokes = require('../../models/db/jokes.js');
-const Favorite = require('../../models/db/favorites.js');
-const Votes = require('../../models/db/votes.js');
+const Favorites = require('../../models/db/favorites.js');
 
 const { verifyJoke } = require('../../middleware/jokes.js');
 
 router
   .route('/')
   .get(async (req, res) => {
-    let jokes = await Jokes.find({ 'j.isPublic': true });
-    jokes = jokes.map(j => ({ ...j, upvotes: 1, downvotes: 1, favorites: 1 }));
-    // const all_favorites
+    const { user_id } = res.locals.token;
+    const jokes = await Jokes.find({ 'j.isPublic': true });
+    // This is a terrible way to do this but it gets the product shipped....
+    const user_favorites = await Favorites.find({ 'f.user_id': user_id });
+    const ids = {};
+    user_favorites.forEach(f => {
+      if (!ids[f.joke_id]) ids[f.joke_id] = true;
+    });
+    jokes.forEach((j, i) => {
+      if (ids[j.id]) jokes[i].isFavorite = true;
+      else jokes[i].isFavorite = false;
+    });
+
     return jokes.length
       ? res.status(200).json(jokes)
       : res.status(200).json({ message: 'No joke, there are no jokes!' });
@@ -20,21 +29,25 @@ router
     const { user_id } = res.locals.token;
 
     const joke = await Jokes.create({ user_id, setup, punchline, isPublic });
+    joke.isFavorite = false;
     return res.status(201).json(joke);
   });
 
 router.route('/by_user').get(async (req, res) => {
   const { user_id } = res.locals.token;
-  const userJokes = await Jokes.find({ 'j.user_id': user_id });
+  const jokes = await Jokes.find({ 'j.user_id': user_id });
 
-  const cheatingMyJokes = userJokes.map(j => ({
-    ...j,
-    upvotes: 1,
-    downvotes: 1,
-    favorites: 1
-  }));
+  const user_favorites = await Favorites.find({ 'f.user_id': user_id });
+  const ids = {};
+  user_favorites.forEach(f => {
+    if (!ids[f.joke_id]) ids[f.joke_id] = true;
+  });
+  jokes.forEach((j, i) => {
+    if (ids[j.id]) jokes[i].isFavorite = true;
+    else jokes[i].isFavorite = false;
+  });
 
-  return res.status(200).json(cheatingMyJokes);
+  return res.status(200).json(jokes);
 });
 
 router
@@ -43,6 +56,9 @@ router
     const { user_id } = res.locals.token;
     const { id } = req.params;
     const joke = await Jokes.find({ 'j.id': id }).first();
+    const favorite = await Favorites.find({ 'f.joke_id': joke.id });
+    joke.isFavorite = favorite ? true : false;
+
     return joke && (joke.isPublic || joke.user_id === user_id)
       ? res.status(200).json(joke)
       : res

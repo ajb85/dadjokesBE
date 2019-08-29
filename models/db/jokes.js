@@ -10,14 +10,6 @@ module.exports = {
 function find(filter) {
   return filter
     ? db('jokes AS j')
-        // .count('t.* AS count')
-        // .from(function() {
-        //   this.select('*')
-        //     .from('favorites AS f')
-        //     .where({ 'f.joke_id': 'j.id' })
-        //     .join('jokes AS j', { 'f.joke_id': 'j.id' })
-        //     .as('t');
-        // })
         .select(
           'j.id AS id',
           'u.id AS user_id',
@@ -26,18 +18,32 @@ function find(filter) {
           'j.punchline AS punchline',
           'j.isPublic AS isPublic'
         )
+        .count('f.joke_id AS favorites')
+        .count('up.joke_id AS upvotes')
+        .count('down.joke_id AS downvotes')
         .where(filter)
         .join('users AS u', { 'j.user_id': 'u.id' })
+        .leftJoin('favorites AS f', { 'f.joke_id': 'j.id' })
+        .leftJoin('votes AS up', { 'up.joke_id': 'j.id', 'up.vote': 1 })
+        .leftJoin('votes AS down', { 'down.joke_id': 'j.id', 'down.vote': -1 })
+        .groupBy('j.id', 'u.id')
     : db('jokes AS j')
-        .count('f.id as favorites')
         .select(
           'j.id AS id',
-          'u.email AS creator',
+          'u.id AS user_id',
+          'u.username AS creator',
           'j.setup AS setup',
           'j.punchline AS punchline',
           'j.isPublic AS isPublic'
         )
-        .join('users AS u', { 'j.user_id': 'u.id' });
+        .count('f.joke_id AS favorites')
+        .count('up.joke_id AS upvotes')
+        .count('down.joke_id AS downvotes')
+        .join('users AS u', { 'j.user_id': 'u.id' })
+        .leftJoin('favorites AS f', { 'f.joke_id': 'j.id' })
+        .leftJoin('votes AS up', { 'up.joke_id': 'j.id', 'up.vote': 1 })
+        .leftJoin('votes AS down', { 'down.joke_id': 'j.id', 'down.vote': -1 })
+        .groupBy('j.id', 'u.id');
 }
 
 function edit(filter, newInfo) {

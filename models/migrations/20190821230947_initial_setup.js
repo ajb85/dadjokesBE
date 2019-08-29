@@ -65,4 +65,10 @@ exports.up = function(knex) {
     });
 };
 
-exports.down = function(knex) {};
+exports.down = function(knex) {
+  return knex.schema
+    .dropTable('votes')
+    .dropTable('favorites')
+    .dropTable('jokes')
+    .dropTable('users');
+};
