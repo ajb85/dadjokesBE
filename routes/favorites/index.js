@@ -20,10 +20,10 @@ router.route('/toggle/:joke_id').post(async (req, res) => {
   const joke = await Jokes.find({ 'j.id': joke_id }).first();
 
   if (joke && (joke.user_id === user_id || joke.isPublic)) {
-    await Favorites.toggle({ user_id, joke_id });
-    const users_favorites = await Favorites.find({ 'f.user_id': user_id });
+    const toggled = await Favorites.toggle({ user_id, joke_id });
+    joke.isFavorite = toggled.id ? true : false;
 
-    return res.status(200).json(users_favorites);
+    return res.status(200).json(joke);
   } else
     return res.status(404).json({
       message: "That joke doesn't exist or you don't own the private joke."
